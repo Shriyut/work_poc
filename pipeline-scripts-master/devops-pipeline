@@ -1,0 +1,40 @@
+node{
+  stage('SCM Checkout'){
+    git url: 'https://github.com/ashoksanem/jenkins_test'
+    }
+
+     stage('Mvn Package'){
+      sh label: '', script: 'mvn  clean  package'
+   }
+    
+   stage('SonarQube Analysis') {
+        def mvnHome =  tool name: 'maven-3', type: 'maven'
+        withSonarQubeEnv('sonar_server') { 
+          sh "${mvnHome}/bin/mvn sonar:sonar"
+        }
+    } 
+    
+    stage('Build Docker Image'){
+     sh label: '', script: 'sudo docker build -t tomcatdevstack:1 .'
+     }
+
+    stage('Docker ImageTag'){
+      sh label: '', script:'sudo docker tag  tomcatdevstack:1 35.243.237.117/stack/tomcat:1'
+    } 
+    stage('Harbor Login'){
+     sh label: '', script: 'sudo  docker login -u admin -p Harbor12345 35.243.237.117'
+    }
+    
+    stage('Push To Harbor'){
+     sh label: '', script: 'sudo docker push 35.243.237.117/stack/tomcat:1'  
+     } 
+    
+   stage('Connecting To Cluster'){
+     sh 'gcloud beta container clusters get-credentials k8s-stack-devopsstack-101819104711 --region us-central1 --project cloudglobaldelivery-1000135575'       
+    }
+
+   stage('Build Docker Imager'){
+     sh label: '', script: 'sudo kubectl apply  -f cicd.yaml'
+    }
+}
+

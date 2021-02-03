@@ -1,0 +1,57 @@
+node{
+  stage('SCM Checkout'){
+    git url: 'https://github.com/ashoksanem/jenkins_test'
+    }
+
+     stage('Mvn Package'){
+      sh label: '', script: 'mvn  clean  package'
+   }
+    
+   stage('SonarQube Analysis') {
+        def mvnHome =  tool name: 'maven-3', type: 'maven'
+        withSonarQubeEnv('sonar_server') { 
+          sh "${mvnHome}/bin/mvn sonar:sonar"
+        }
+    } 
+    
+    stage('Build Docker Image'){
+     sh label: '', script: 'sudo docker build -t  35.237.83.245/stack/latest .'
+     sh label: '', script: 'sudo docker build -t  ashokgoud/stack:latest .'
+     }
+
+     
+    stage('Harbor Login'){
+     withCredentials([string(credentialsId: 'harbor_admin_passwd', variable: 'Harbor_Passwd')]) {
+      sh label: '', script: "sudo  docker login -u admin -p ${Harbor_Passwd} 35.237.83.245"
+     }
+    }
+    stage('Push To Harbor'){
+     sh label: '', script: 'sudo docker push 35.237.83.245/stack/latest'  
+     } 
+    
+    stage('DockerHub Login'){
+     withCredentials([string(credentialsId: 'docker-pwd', variable: 'dockerHubPwd')]) {
+      sh label: '', script: "sudo  docker login -u ashokgoud -p ${dockerHubPwd}"
+     }
+    }
+   
+    stage('Push To DockerHub'){
+     sh label: '', script: 'sudo docker push ashokgoud/stack:latest'
+    }
+
+     stage('Connecting To Cluster'){
+      sh label: '', script: 'sudo rm -rf  /root/.kube/cache'
+      sh label: '', script: 'sudo rm -rf  /root/.kube/config'
+      sh label: '', script: 'sudo rm -rf  /root/.kube/http-cache'
+      sh label: '', script: 'sudo gcloud beta container clusters get-credentials k8s-mydev-devopsstack-103019121037 --region us-east1 --project cloudglobaldelivery-1000135575'       
+     }
+
+   stage('Deploy To GKE'){
+      sh label: '', script: 'sudo kubectl apply  -f cicd.yaml'
+     }
+
+  stage('Service Expose'){
+     sh label: '', script: 'sudo kubectl expose deployment tomcatjava --type=LoadBalancer'
+    }
+}    
+

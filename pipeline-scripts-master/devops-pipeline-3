@@ -1,0 +1,53 @@
+node{
+  stage('SCM Checkout'){
+    git url: 'https://github.com/ashoksanem/jenkins_test'
+    }
+
+     stage('Mvn Package'){
+      sh label: '', script: 'mvn  clean  package'
+   }
+    
+   stage('SonarQube Analysis') {
+        def mvnHome =  tool name: 'maven-3', type: 'maven'
+        withSonarQubeEnv('sonar_server') { 
+          sh "${mvnHome}/bin/mvn sonar:sonar"
+        }
+    } 
+    
+    stage('Build Docker Image'){
+     sh label: '', script: 'sudo docker build -t  34.74.60.207/stack/tomcatjava .'
+     sh label: '', script: 'sudo docker build -t  ashokgoud/stack:tomcatjava .'
+     }
+
+     
+    stage('Harbor Login'){
+     withCredentials([string(credentialsId: 'harbor_admin_passwd', variable: 'Harbor_Passwd')]) {
+      sh label: '', script: "sudo  docker login -u admin -p ${Harbor_Passwd} 34.74.60.207"
+     }
+    }
+    stage('Push To Harbor'){
+     sh label: '', script: 'sudo docker push 34.74.60.207/stack/tomcatjava'  
+     } 
+    
+    stage('DockerHub Login'){
+     withCredentials([string(credentialsId: 'docker-pwd', variable: 'dockerHubPwd')]) {
+      sh label: '', script: "sudo  docker login -u ashokgoud -p ${dockerHubPwd}"
+     }
+    }
+   
+    stage('Push To DockerHub'){
+     sh label: '', script: 'sudo docker push ashokgoud/stack:tomcatjava'
+    }
+
+     stage('Connecting To Cluster'){
+      sh label: '', script: 'gcloud beta container clusters get-credentials k8s-hub-devopsstack-102919090312 --region us-east1 --project cloudglobaldelivery-1000135575'       
+     }
+
+   stage('Build Docker Imager'){
+      sh label: '', script: 'sudo kubectl apply  -f cicd.yaml'
+     }
+
+   stage('Service Expose'){
+     sh label: '', script: 'kubectl expose deployment tomcatjava --type=LoadBalancer'
+    }
+}    

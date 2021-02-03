@@ -1,0 +1,21 @@
+node{
+
+  stage('Clone Source Repo') {
+    
+    git url: 'https://github.com/iamdaaniyaal/'+ stack +'.git'
+    }
+ 
+  stage('vm provision'){
+    sh '''
+        
+        sudo rm -rf terraform.tfstate
+        sudo rm -rf terraform.tfstate.backup
+        echo $stack_name
+        cp /home/sanem_ashokgoud/jenkins/test/lamp/credentials.json .
+        chmod -R 777 *
+         ls -l
+        ./change.sh
+     
+     '''
+  
+  }   

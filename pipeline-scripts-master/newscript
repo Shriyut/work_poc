@@ -1,0 +1,99 @@
+pipeline{
+    agent any
+  stages  {
+  stage('SCM Checkout'){
+      steps{
+        git url: 'https://github.com/ashoksanem/jenkins_test'}
+    }
+
+     stage('Mvn Package'){
+         steps{
+      sh 'mvn install -DskipTests=true'}
+   }
+  
+    
+  stage('SonarQube Analysis') {
+        //def mvnHome =  tool name: 'maven-3', type: 'maven'
+        tools {
+            jdk 'testjdk'
+        }
+        steps{
+        withSonarQubeEnv('sonar_server') { 
+          sh "mvn sonar:sonar -X"
+          sh "printenv"
+          sh "java -version"
+        }}
+    } 
+    stage('Build Docker Image'){
+        steps{
+     //sh label: '', script: 'sudo docker build -t 35.237.122.65/stack/latest .'
+     sh label: '', script: 'sudo docker build -t ${harborip}/stack/latest .'
+     //sh label: '', script: 'sudo docker build -t  ashokgoud/stack:latest .'
+     sh label: '', script: 'sudo docker build -t  shubhendu7199/stack:'+BUILD_NUMBER+' .'
+     }
+    }
+
+     
+    stage('Harbor Login'){
+        steps {
+     withCredentials([string(credentialsId: 'harbor_admin_passwd', variable: 'Harbor_Passwd')]) {
+      //sh label: '', script: "sudo  docker login -u admin -p ${Harbor_Passwd} 34.73.203.96"
+      sh label: '', script: "sudo  docker login -u admin -p ${Harbor_Passwd} ${harborip}"
+     }
+    }
+    }
+    stage('Push To Harbor'){
+        steps {
+     //sh label: '', script: 'sudo docker push 35.237.122.65/stack/latest' 
+     sh label: '', script: 'sudo docker push ${harborip}/stack/latest'
+     } 
+    }
+    
+    stage('DockerHub Login'){
+        steps {
+      withCredentials([string(credentialsId: 'dockerlogins', variable: 'dockerhubconnect')]) {
+           sh label: '', script: "sudo  docker login -u shubhendu7199 -p ${dockerhubconnect}"
+       }
+    /* withCredentials([string(credentialsId: 'docker-pwd', variable: 'dockerHubPwd')]) {
+      sh label: '', script: "sudo  docker login -u ashokgoud -p ${dockerHubPwd}"
+     }*/
+    }
+    }
+   
+    stage('Push To DockerHub'){
+        steps {
+     //sh label: '', script: 'sudo docker push ashokgoud/stack:latest'
+     sh label: '', script: 'sudo docker push shubhendu7199/stack:'+BUILD_NUMBER
+     sh 'sudo docker rmi shubhendu7199/stack:'+BUILD_NUMBER
+     sh 'sudo docker images'
+    }
+    }
+
+     stage('Connecting To Cluster'){
+         steps {
+      sh label: '', script: 'sudo rm -rf  /root/.kube/cache'
+      sh label: '', script: 'sudo rm -rf  /root/.kube/config'
+      sh label: '', script: 'sudo rm -rf  /root/.kube/http-cache'
+      withCredentials([file(credentialsId: 'gkeconn', variable: 'gke_key')]) {
+          sh("sudo gcloud auth activate-service-account --key-file=${gke_key}")
+          //sh("sudo gcloud container clusters get-credentials k8s-kumar-devopsstack-072520113630 --zone us-east1-d --project cloudglobaldelivery-1000135575")
+      //sh label: '', script: 'sudo gcloud beta container clusters get-credentials k8s-jhinjira-devopsstack-080520172856 --region us-east1 --project cloudglobaldelivery-1000135575'
+      sh label: '', script: 'sudo gcloud beta container clusters get-credentials cluster --region us-east1 --project cloudglobaldelivery-1000135575'
+      }
+     }
+     }
+
+  stage('Deploy To GKE'){
+      steps {
+      sh label: '', script: 'sudo kubectl apply  -f cicd.yaml'
+      sh 'sudo kubectl set image deployment/tomcatjava tomcat=shubhendu7199/stack:'+BUILD_NUMBER+' --record'
+     }
+  }
+
+  stage('Service Expose'){
+      steps {
+     sh label: '', script: 'sudo kubectl expose deployment tomcatjava --type=LoadBalancer'
+    }
+  }
+} 
+}
