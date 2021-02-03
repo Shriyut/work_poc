@@ -1,0 +1,27 @@
+node{
+  stage('SCM Checkout'){
+     git credentialsId: 'Mygit-creds', url: 'https://github.com/ashoksanem/jenkins_test'
+    }
+  stage('Mvn Package'){
+      sh label: '', script: 'mvn  clean  deploy'
+  }
+  stage('Build Docker Imager'){
+   sh 'sudo docker build -t gcr.io/jenkins-250111/tomcat . '
+  }
+  stage('gcr settings'){
+   sh label: '', script: 'sudo chmod 766 /var/run/docker.sock'
+     sh label: '', script: 'sudo gcloud auth configure-docker'
+  }
+  stage('Push image') {
+      withDockerRegistry(credentialsId: 'gcr:jenkins_gcr', url: 'https://gcr.io'){
+        sh label: '', script: 'sudo docker push gcr.io/jenkins-250111/tomcat'
+   }
+  }
+}
+
+
+
+
+
+
+#############test
