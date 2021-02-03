@@ -1,0 +1,25 @@
+apiVersion: cloud.google.com/v1beta1
+kind: BackendConfig
+metadata:
+  namespace: default
+  name: backend-config
+spec:
+  cdn:
+    enabled: true
+    cachePolicy:
+      includeHost: true
+      includeProtocol: true
+      includeQueryString: false
+---
+apiVersion: cloud.google.com/v1beta1
+kind: BackendConfig
+metadata:
+  namespace: default
+  name: backend-config2
+spec:
+  cdn:
+    enabled: true
+    cachePolicy:
+      includeHost: true
+      includeProtocol: true
+      includeQueryString: false

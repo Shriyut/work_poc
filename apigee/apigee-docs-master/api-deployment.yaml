@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: my-deployment
+spec:
+  selector:
+    matchLabels:
+      purpose: cdn
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        purpose: cdn
+    spec:
+      containers:
+      - name: echo-amd64
+        image: gcr.io/google-samples/hello-app-cdn:1.0
+      - name: apigee
+        image: gcr.io/apigee-microgateway/edgemicro:3.0.2
+        ports:
+        - containerPort: 8000
+        env:
+        - name: EDGEMICRO_PROCESSES
+          valueFrom:
+            secretKeyRef:
+              name: secret-api
+              key: EDGEMICRO_PROCESSES
+        - name: EDGEMICRO_ORG
+          valueFrom:
+            secretKeyRef:
+              name: secret-api
+              key: EDGEMICRO_ORG
+        - name: EDGEMICRO_ENV
+          valueFrom:
+            secretKeyRef:
+              name: secret-api
+              key: EDGEMICRO_ENV
+        - name: EDGEMICRO_KEY
+          valueFrom:
+            secretKeyRef:
+              name: secret-api
+              key: EDGEMICRO_KEY
+        - name: EDGEMICRO_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: secret-api
+              key: EDGEMICRO_SECRET
+        - name: EDGEMICRO_CONFIG
+          valueFrom: 
+            secretKeyRef:
+              name: secret-api
+              key: EDGEMICRO_CONFIG
+        - name: SERVICE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: secret-api
+              key: SERVICE_NAME
+        volumeMounts:
+        - name: kubectl-config
+          mountPath: /home/shriyut_jha/.kube/
+          readOnly: true
+      volumes:
+      - name: kubectl-config
+        hostPath:
+          path: /home/shriyut_jha/.kube/
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: default
+  name: my-deployment2
+spec:
+  selector:
+    matchLabels:
+      purpose: cdn2
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        purpose: cdn2
+    spec:
+      containers:
+      - name: echo-amd64
+        image: gcr.io/google-samples/hello-app-cdn:1.0
+      - name: apigee
+        image: gcr.io/apigee-microgateway/edgemicro:3.0.2
+        ports:
+        - containerPort: 8000
+        env:
+        - name: EDGEMICRO_PROCESSES
+          valueFrom:
+            secretKeyRef:
+              name: secret-api
+              key: EDGEMICRO_PROCESSES
+        - name: EDGEMICRO_ORG
+          valueFrom:
+            secretKeyRef:
+              name: secret-api
+              key: EDGEMICRO_ORG
+        - name: EDGEMICRO_ENV
+          valueFrom:
+            secretKeyRef:
+              name: secret-api
+              key: EDGEMICRO_ENV
+        - name: EDGEMICRO_KEY
+          valueFrom:
+            secretKeyRef:
+              name: secret-api
+              key: EDGEMICRO_KEY
+        - name: EDGEMICRO_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: secret-api
+              key: EDGEMICRO_SECRET
+        - name: EDGEMICRO_CONFIG
+          valueFrom: 
+            secretKeyRef:
+              name: secret-api
+              key: EDGEMICRO_CONFIG
+        - name: SERVICE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: secret-api
+              key: SERVICE_NAME
+        volumeMounts:
+        - name: kubectl-config
+          mountPath: /home/shriyut_jha/.kube/
+          readOnly: true
+      volumes:
+      - name: kubectl-config
+        hostPath:
+          path: /home/shriyut_jha/.kube/

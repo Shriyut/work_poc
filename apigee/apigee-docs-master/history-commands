@@ -1,0 +1,82 @@
+tar xvf microgateway_v3.0.2_Linux_x86_64.tar.gz 
+  151  ls
+  152  cd microgateway_v3.0.2_Linux_x86_64
+  153  ls
+  154  edgemicroctl
+  155  sudo cp ./edgemicroctl /bin/edgemicroctl
+  156  egdemicroctl
+  157  source ~/.bash_profile
+  158  egdemicroctl
+  159  cd samples/
+  160  ls
+  161  cd ..
+  162  cd install/
+  163  ls
+  164  cd kubernetes/
+  165  ls
+  166  cd ..
+  167  cat edgemicroctl 
+  168  ls -la
+  169  sh edgemicroctl 
+  170  sudo chmod +x edgemicroctl 
+  171  ls -la
+  172  ./edgemicroctl 
+  173  /bin/edgemicroctl
+  174  cd ..
+  175  kubectl get pods -n cdn-api
+  176  cd poc-files/
+  177  ls
+  178  cd ..
+  179  ls -la
+  180  cd .edgemicro/
+  181  ls
+  182  history
+  183  ls 
+  184  cat authentick9-eval-test-config.yaml 
+  185  cat default.yaml 
+  186  vi default.yaml 
+  187  cd ..
+  188  ls
+  189  cd microgateway_v3.0.2_Linux_x86_64
+  190  kubectl apply -f install/kubernetes/edgemicro.yaml
+  191  kubectl get svc -n edgemicro-system
+  192  edgemicro init
+  193  edgemicro configure -o authentick9-eval -e test -u authentick9@gmail.com -p xxxxx
+  194  edgemicro configure -o authentick9-eval -e test -u authentick9
+  195  edgemicro configure -o authentick9-eval -e test -u authentick9@gmail.com
+  196  ls
+  197  ./edgemicroctl
+  198  kubectl apply -f <(edgemicroctl -org=authentick9-eval -env=test -key=a351947bd0972db2e9cd9e3264f24fe0dc2ad79c54356c7d74cf009f33371f58 -sec=c26b1fbf5e0db1c5850f64085808f6bcb717ee9065cfc595457176c98089d995 -conf=~/.edgemicro/authentick9-eval-test-config.yaml -svc=~/poc-files/service3.yaml)
+  199  cd ..
+  200  ls
+  201  ls -la
+  202  cd .edgemicro/
+  203  ls -la
+  204  sudo chmod 777 authentick9-eval-test-config.yaml 
+  205  cd ..
+  206  cd microgateway_v3.0.2_Linux_x86_64
+  207  kubectl apply -f <(edgemicroctl -org=authentick9-eval -env=test -key=a351947bd0972db2e9cd9e3264f24fe0dc2ad79c54356c7d74cf009f33371f58 -sec=c26b1fbf5e0db1c5850f64085808f6bcb717ee9065cfc595457176c98089d995 -conf=~/.edgemicro/authentick9-eval-test-config.yaml -svc=~/poc-files/service3.yaml)
+  
+  cd ..
+  209  sudo chmod 777 .edgemicro
+  210  ls -la
+  211  cd microgateway_v3.0.2_Linux_x86_64
+  212  kubectl apply -f <(edgemicroctl -org=authentick9-eval -env=test -key=a351947bd0972db2e9cd9e3264f24fe0dc2ad79c54356c7d74cf009f33371f58 -sec=c26b1fbf5e0db1c5850f64085808f6bcb717ee9065cfc595457176c98089d995 -conf=~/.edgemicro/authentick9-eval-test-config.yaml -svc=~/poc-files/service3.yaml)
+  213  kubectl apply -f <(./edgemicroctl -org=authentick9-eval -env=test -key=a351947bd0972db2e9cd9e3264f24fe0dc2ad79c54356c7d74cf009f33371f58 -sec=c26b1fbf5e0db1c5850f64085808f6bcb717ee9065cfc595457176c98089d995 -conf=~/.edgemicro/authentick9-eval-test-config.yaml -svc=~/poc-files/service3.yaml)
+  214  /bin/edgemicroctl
+  215  cd /
+  216  kubectl apply -f <(/bin/edgemicroctl -org=authentick9-eval -env=test -key=a351947bd0972db2e9cd9e3264f24fe0dc2ad79c54356c7d74cf009f33371f58 -sec=c26b1fbf5e0db1c5850f64085808f6bcb717ee9065cfc595457176c98089d995 -conf=~/.edgemicro/authentick9-eval-test-config.yaml -svc=~/poc-files/service3.yaml)
+  217  sudo cp ~/.edgemicro/authentick9-eval-test-config.yaml /
+  218  ls
+  219  kubectl apply -f <(/bin/edgemicroctl -org=authentick9-eval -env=test -key=a351947bd0972db2e9cd9e3264f24fe0dc2ad79c54356c7d74cf009f33371f58 -sec=c26b1fbf5e0db1c5850f64085808f6bcb717ee9065cfc595457176c98089d995 -conf=/authentick9-eval-test-config.yaml -svc=~/poc-files/service3.yaml)
+  220  cat authentick9-eval-test-config.yaml 
+  221  kubectl apply -f - <(/bin/edgemicroctl -org=authentick9-eval -env=test -key=a351947bd0972db2e9cd9e3264f24fe0dc2ad79c54356c7d74cf009f33371f58 -sec=c26b1fbf5e0db1c5850f64085808f6bcb717ee9065cfc595457176c98089d995 -conf=/authentick9-eval-test-config.yaml -svc=~/poc-files/service3.yaml)
+  222  cd ~/poc-files/
+  223  kubectl apply -f - <(/bin/edgemicroctl -org=authentick9-eval -env=test -key=a351947bd0972db2e9cd9e3264f24fe0dc2ad79c54356c7d74cf009f33371f58 -sec=c26b1fbf5e0db1c5850f64085808f6bcb717ee9065cfc595457176c98089d995 -conf=/authentick9-eval-test-config.yaml -svc=./service3.yaml)
+  224  kubectl apply -f  <(/bin/edgemicroctl -org=authentick9-eval -env=test -key=a351947bd0972db2e9cd9e3264f24fe0dc2ad79c54356c7d74cf009f33371f58 -sec=c26b1fbf5e0db1c5850f64085808f6bcb717ee9065cfc595457176c98089d995 -conf=/authentick9-eval-test-config.yaml -svc=./service3.yaml)
+  225  kubectl get ns
+  226  kubectl get svc -n edgemicro-system
+  227  kubectl get svc cdn-api
+  228  kubectl get svc -n cdn-api
+  229  kubectl get pods -n edgemicro-system
+  230  kubectl get ing -o wide -n cdn-api
