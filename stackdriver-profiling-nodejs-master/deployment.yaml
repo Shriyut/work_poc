@@ -1,0 +1,45 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: nodejs-profiler
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nodejs-profiler
+        language: nodejs
+    spec:
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: sa-secret-key
+      containers:
+      - name: nodejs-profiler
+        image: gcr.io/cloudglobaldelivery-1000135575/nodejs-profiler
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+        ports:
+        - name: http
+          containerPort: 8080
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/sa-secret.key.json
+        - name: GOOGLE_PROJECT_ID
+          value: cloudglobaldelivery-1000135575
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-profiler
+  labels:
+    app: nodejs-profiler
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: nodejs-profiler
+  type: NodePort

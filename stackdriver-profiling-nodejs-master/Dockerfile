@@ -1,0 +1,15 @@
+FROM node:10
+
+LABEL maintainer="shriyut.jha@cognizant.com"
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm install
+RUN npm install @google-cloud/profiler
+
+COPY . .
+
+EXPOSE 8080
+CMD [ "npm", "start" ]
