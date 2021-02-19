@@ -12,3 +12,16 @@ if echo "$answer" | grep -iq "^y" ;then
 else
         echo No
 fi
+
+
+#same script as above but accepts other values from y or n
+#above scipt would only accept y or n or else it would wait
+
+# echo -n " Y/N?"
+# old_stty_cfg=$(stty -g)
+# stty raw -echo ; answer=$(head -c 1) ; stty $old_stty_cfg
+# if echo "$answer" | grep -iq "^y" ;then
+#       echo Yes
+# else
+#       echo No
+# fi
