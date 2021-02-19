@@ -1,4 +1,7 @@
+#POSIX generic solution for prompting users to provide input to run scripts
+
 echo -n " Y/N?"
+echo # to start a newline
 read answer
 
 if [ "$answer" != "${answer#[Yy]}" ] ;then
@@ -6,3 +9,9 @@ if [ "$answer" != "${answer#[Yy]}" ] ;then
 else
         echo "No"
 fi
+
+# passing values from command line
+# $ yes '' | ./test.sh 
+# Y/N?No
+# $ yes 'Y' | ./test.sh 
+# Y/N?Yes
