@@ -15,3 +15,5 @@ fi
 # Y/N?No
 # $ yes 'Y' | ./test.sh 
 # Y/N?Yes
+
+# ./prompt.sh && echo $! > pid.txt - executes the command and stores the process id of shell script in a text file
