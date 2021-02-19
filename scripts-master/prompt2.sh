@@ -25,3 +25,5 @@ fi
 # else
 #       echo No
 # fi
+
+# ./prompt2.sh && echo $! > pid.txt - executes the command and stores the process id of shell script in a text file
